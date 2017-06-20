@@ -1,4 +1,5 @@
-<rfc category="exp" docName="Certificate Limitation Policy">
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<rfc category="exp" docName="draft-belyavskiy-certificate-limitation-policy-00">
 <front>
 <title>Certificate Limitation Policy</title>
 <author fullname="Dmitry Belyavskiy">
