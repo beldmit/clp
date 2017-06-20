@@ -1,0 +1,85 @@
+<rfc category="exp" docName="Certificate Limitation Policy">
+<front>
+<title>Certificate Limitation Policy</title>
+<author fullname="Dmitry Belyavskiy">
+<address>
+<email>beldmit@gmail.com</email>
+</address>
+</author>
+<date/>
+<area>sec</area>
+<abstract>
+The document provides a specification of the application-level trust model.
+Being provided at the application level, the limitations of trust can be
+distributed separately using cryptographically protected format instead of
+hardcoding the checks into the application itself.
+</abstract>
+</front>
+<middle>
+
+<section title="Introduction">
+Binary trust model standardized as a set of trusted anchors and CRLs/OCSP
+services does not cover all corner cases in the modern crypto world. There is a
+need in more differentiated limitations. Some of them are suggested by Google
+when it limits the usage of  Symantec’s certificates. The CRL profile does not
+fit the purpose of such limitations. The CRLs are issued by the same CAs that
+are subject to be limited. 
+
+Currently the set of CAs trusted by OS can be used for the validation purposes.
+In case when a large enough CA becomes untrusted, it cannot be deleted from the
+storage of trusted CAs because it may cause error of validation of many
+certificates. The measures usually taken in such cases usually include
+application-level limitation of certificates lifetimes, refuse to accept
+EV-certificates in other way than DV, requirements of usage Certificate
+Transparency, etc.
+
+This document suggests a cryptographically protected format of description of
+such limitations. This format can be used by applications that use system-wide
+set of trust anchors for validating purposes or by applications with own wide
+enough set of trusted anchors in case when the trust anchor for the entity
+found misbehaving cannot be revoked.
+
+Currently the only way to provide such limitations is hard coding in
+application itself. Using of CLPs does not allow to completely avoid hard
+coding but allows to hard code only the minimal set of rarely changing data,
+such as the certificate to verify the signature and minimal date of issuance
+(see below).
+</section>
+
+<section title="Certificate Limitations Profile">
+A proposed syntax and overall structure of CLP is very similar to the one defined for CRLs.
+TBD.
+
+<section title="CLP fields">
+TBD
+</section>
+<section title="CLP extensions">
+TBD
+</section>
+<section title="CLP signature">
+The key used for signing the CLP files should have a special Key Usage bit and/or
+an Extended Key Usage value.
+</section>
+<section title="CLP entry fields">
+
+</section>
+<section title="CLP entry extensions">
+TBD
+</section>
+</section>
+
+<section title="ASN.1 notation">
+TBD
+</section>
+<section title="Security considerations">
+In case when an application uses CLP, it is recommended to specify the minimal
+date of issuing of the CLP document somewhere in code. It allows to avoid an
+attack of CLP rollback when the stale version of CLP is used.
+</section>
+
+<section title="IANA considerations"/>
+<section title="Acknoledgements"/>
+<section title="References"/>
+
+</middle>
+</rfc>
