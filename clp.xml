@@ -72,9 +72,39 @@ an Extended Key Usage value.</t>
 itself or to all of its descendants in the chain of trust.</t>
 </list>
 </t>
+<t>
+and a subset of the following limitations:
+<list>
+<t>maxPeriodStart (do not trust the certs issued after)</t>
+<t>maxPeriodEnd (do not trust the certs after)</t>
+<t>validityPeriod (take minimal value from "native" validity period and specified in the limitation file)</t>
+<t>ignoreX509Extensions (e.g. EV)</t>
+<t>requiredX509extensions (do not trust the certificates )</t>
+</list>
+</t>
+<t>The limitations are identified by OIDs</t>
+<section title="Limitations">
+<section title="maxPeriodStart">
+<t>When this limitation is present, no certificate matching the entry and
+issued after the specified date should not be trusted</t>
 </section>
-<section title="CLP entry extensions">
-<t>TBD</t>
+<section title="maxPeriodEnd">
+<t>When this limitation is present, no certificate matching the entry should be
+trusted after the specified date.</t>
+</section>
+<section title="validityPeriod">
+<t>When this limitation is present, no certificate matching the entry should be
+treated as valid after specified period from its validFrom.</t>
+</section>
+<section title="ignoreX509Extensions">
+<t>When this limitation is present, the extensions listed in this element
+should be ignored for the matching certificate.</t>
+</section>
+<section title="requiredX509extensions">
+<t>When this limitation is present, the extensions listed in this element
+should be present for the matching certificate.</t>
+</section>
+</section>
 </section>
 </section>
 
@@ -89,7 +119,10 @@ attack of CLP rollback when the stale version of CLP is used.</t>
 
 <section title="IANA considerations"/>
 <section title="Acknoledgements"/>
-<section title="References"/>
-
+<section title="References">
+<t>The current version of the document is available on GitHub
+https://github.com/beldmit/clp
+</t>
+</section>
 </middle>
 </rfc>
