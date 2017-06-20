@@ -71,6 +71,7 @@ an Extended Key Usage value.</t>
 <t>The flag indicating whether limitations are applied to the certificate
 itself or to all of its descendants in the chain of trust.</t>
 </list>
+</t>
 </section>
 <section title="CLP entry extensions">
 <t>TBD</t>
