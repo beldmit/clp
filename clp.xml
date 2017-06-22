@@ -9,8 +9,6 @@
 </author>
 <date/>
 <area>sec</area>
-<workgroup>spasm</workgroup>
-<workgroup>saag</workgroup>
 <abstract>
 <t>The document provides a specification of the application-level trust model.
 Being provided at the application level, the limitations of trust can be
@@ -107,6 +105,11 @@ should be present for the matching certificate.</t>
 </section>
 </section>
 </section>
+</section>
+
+<section title="Verification with CLP">
+<t>In case of using CLP the checks enforced by CLP should be applied after the other checks.</t>
+<t>The limitation provided by CLP MUST NOT extend the trustworthy of the checked certificate.</t>
 </section>
 
 <section title="ASN.1 notation">
