@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
-<rfc category="exp" docName="draft-belyavskiy-certificate-limitation-policy-00">
+<rfc category="exp" docName="draft-belyavskiy-certificate-limitation-policy-02">
 <front>
 <title>Certificate Limitation Policy</title>
 <author fullname="Dmitry Belyavskiy">
@@ -21,44 +21,75 @@ hardcoding the checks into the application itself.</t>
 <section title="Introduction">
 <t>Binary trust model standardized as a set of trusted anchors and CRLs/OCSP
 services does not cover all corner cases in the modern crypto world. There is a
-need in more differentiated limitations. Some of them are suggested by Google
-when it limits the usage of  Symantec’s certificates. The CRL profile does not
-fit the purpose of such limitations. The CRLs are issued by the same CAs that
-are subject to be limited. </t>
+need in more differentiated limitations. Some of them are <eref
+target="https://groups.google.com/a/chromium.org/forum/#!msg/blink-dev/eUAKwjihhBs/rpxMXjZHCQAJ">suggested</eref>
+by Google when it limits the usage of Symantec’s certificates. The CRL profile
+does not fit the purpose of such limitations. The CRLs are issued by the same
+CAs that are subject to be limited. </t>
 
 <t>Currently the set of CAs trusted by OS can be used for the validation purposes.
 In case when a large enough CA becomes untrusted, it cannot be deleted from the
 storage of trusted CAs because it may cause error of validation of many
 certificates. The measures usually taken in such cases usually include
-application-level limitation of certificates lifetimes, refuse to accept
-EV-certificates in other way than DV, requirements of usage Certificate
+application-level limitation of certificates lifetimes, refusing to accept
+EV-certificates in other way than DV, requirements to use Certificate
 Transparency, etc.</t>
 
-<t>This document suggests a cryptographically protected format of description of
-such limitations. This format can be used by applications that use system-wide
-set of trust anchors for validating purposes or by applications with own wide
-enough set of trusted anchors in case when the trust anchor for the entity
-found misbehaving cannot be revoked.</t>
+<t>This document suggests a cryptographically signed format dubbed Certificate
+Limitation Profile (CLP) designed for description of such limitations. This
+format can be used by applications that use system-wide set of trust anchors
+for validating purposes or by applications with own wide enough set of trusted
+anchors in case when the trust anchor for the entity found misbehaving cannot
+be revoked.</t>
 
-<t>Currently the only way to provide such limitations is hard coding in
+<t>Currently the only way to provide such limitations is hard coding them in
 application itself. Using of CLPs does not allow to completely avoid hard
-coding but allows to hard code only the minimal set of rarely changing data,
-such as the certificate to verify the signature and minimal date of issuance
-(see below).</t>
+coding but allows to hard code only the minimal set of rarely changing data:
+<list>
+<t>the fact that application uses CLP</t>
+<t>the certificate to verify the signature under the CLP file</t> 
+<t>minimal date of the CLP to be used for the current version of application.</t> 
+</list>
+It will be possible to move the checks for the limitations to the
+external cryptographical libraries, such as OpenSSL, instead of checking them
+at the application level.</t>
 </section>
 
 <section title="Certificate Limitations Profile">
-<t>A proposed syntax and overall structure of CLP is very similar to the one defined for CRLs.
-TBD.</t>
+<t>A proposed syntax and overall structure of CLP is very similar to the one
+<eref target="https://tools.ietf.org/html/rfc5280#section-5">defined for
+CRLs</eref>.
+<figure><artwork><![CDATA[
+   CertificateList  ::=  SEQUENCE  {
+        tbsCertList          TBSCertList,
+        signatureAlgorithm   AlgorithmIdentifier,
+        signatureValue       BIT STRING  }
 
+   TBSCertList  ::=  SEQUENCE  {
+        version                 Version OPTIONAL,
+                                     -- if present, MUST be v1
+        signature               AlgorithmIdentifier,
+        issuer                  Name,
+        thisUpdate              Time,
+        limitedCertificates     SEQUENCE OF SEQUENCE  {
+             userCertificate         CertificateSerialNumber,
+             sertificateIssuer       Name, 
+             limitationDate          Time,
+             limitationPropagation   Enum,
+             fingerprint SEQUENCE {
+                 fingerprintAlgorithm AlgorithmIdentifier,
+                 fingerprintValue     OCTET STRING
+                                  } OPTIONAL,
+             limitations          SEQUENCE,
+                                  } OPTIONAL,
+                                  };
+]]></artwork></figure>
+</t>
 <section title="CLP fields">
 <t>TBD</t>
 </section>
-<section title="CLP extensions">
-<t>TBD</t>
-</section>
 <section title="CLP signature">
-<t>The key used for signing the CLP files should have a special Key Usage bit and/or
+<t>The key used for signing the CLP files should have a special Key Usage value and/or
 an Extended Key Usage value.</t>
 </section>
 <section title="CLP entry fields">
@@ -67,35 +98,35 @@ an Extended Key Usage value.</t>
 <t>The issuer of the certificate with limited trust.</t>
 <t>The serial of the certificate with limited trust.</t>
 <t>The fingerprint of the certificate with limited trust (optional).</t>
-<t>The flag indicating whether limitations are applied to the certificate
-itself or to all of its descendants in the chain of trust.</t>
+<t>limitationPropagation. This field indicates whether limitations are applied to the certificate
+itself, to all of its descendants in the chain of trust, or both.</t>
 </list>
 </t>
 <t>
 and a subset of the following limitations:
 <list>
-<t>maxPeriodStart (do not trust the certs issued after)</t>
-<t>maxPeriodEnd (do not trust the certs after)</t>
-<t>validityPeriod (take minimal value from "native" validity period and specified in the limitation file)</t>
-<t>ignoreX509Extensions (e.g. EV)</t>
-<t>requiredX509extensions (do not trust the certificates )</t>
+<t>maxIssued - do not trust the certs issued after the specified date</t>
+<t>maxValidity  - do not trust the certs after the specified date</t>
+<t>validityPeriod, days - take minimal value from "native" validity period and specified in the limitation file</t>
+<t>ignoredX509Extensions - list of X.509 extensions of limited certificate that MUST be ignored for the specified certificate (e.g. EV-indicating extensions)</t>
+<t>requiredX509extensions - list of X.509 extensions that MUST be present in the certificate to be trusted.</t>
 </list>
 </t>
 <t>The limitations are identified by OIDs</t>
 <section title="Limitations">
-<section title="maxPeriodStart">
-<t>When this limitation is present, no certificate matching the entry and
-issued after the specified date should not be trusted</t>
+<section title="maxIssued">
+<t>When this limitation is present, any certificate matching the entry and
+issued after the specified date MUST NOT be trusted</t>
 </section>
-<section title="maxPeriodEnd">
-<t>When this limitation is present, no certificate matching the entry should be
-trusted after the specified date.</t>
+<section title="maxValidity">
+<t>When this limitation is present, any certificate matching the entry MUST NOT
+be trusted after the specified date.</t>
 </section>
 <section title="validityPeriod">
 <t>When this limitation is present, no certificate matching the entry should be
 treated as valid after specified period from its validFrom.</t>
 </section>
-<section title="ignoreX509Extensions">
+<section title="ignoredX509Extensions">
 <t>When this limitation is present, the extensions listed in this element
 should be ignored for the matching certificate.</t>
 </section>
@@ -107,9 +138,24 @@ should be present for the matching certificate.</t>
 </section>
 </section>
 
+<section title="Verification of CLP">
+<t>The verification of CLP SHOULD be performed by the application. The
+application should check whether the provided CLP matches the internal
+requirements and is correclty signed by the specified key.</t>
+</section>
 <section title="Verification with CLP">
 <t>In case of using CLP the checks enforced by CLP should be applied after the other checks.</t>
 <t>The limitation provided by CLP MUST NOT extend the trustworthy of the checked certificate.</t>
+<t>The limitations are applied after cryptographic validation of the
+certificate and building its chain of trust.  If the certificate or any of its
+ascendants in the chain of trust matches any record in the CLP, the limitations
+are applied from the ascendant to descendants. The maxIssued and maxValidity
+limitations are applied to find out the actual validity periods for the any
+certificate in the chain of trust. If the CLP prescribes to have a particular
+extension(s) and the certificate does not have it, the certificate MUST NOT be
+trusted.
+</t>
+
 </section>
 
 <section title="ASN.1 notation">
@@ -119,10 +165,17 @@ should be present for the matching certificate.</t>
 <t>In case when an application uses CLP, it is recommended to specify the minimal
 date of issuing of the CLP document somewhere in code. It allows to avoid an
 attack of CLP rollback when the stale version of CLP is used.</t>
+<t>It is recommended to distribute CLPs using the channels that are used for
+distribution of the applications themselves to avoid possible DoS
+consequences.</t>
 </section>
 
-<section title="IANA considerations"/>
-<section title="Acknoledgements"/>
+<section title="IANA considerations">
+</section>
+<section title="Acknoledgements">
+<t>Special thaks to Rich Salz, Igor Ustinov, Vasily Dolmatov, Stanislav Smyishlyaev, Patrik Fältström.
+</t>
+</section>
 <section title="References">
 <t>The current version of the document is available on GitHub
 https://github.com/beldmit/clp
