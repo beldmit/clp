@@ -27,7 +27,7 @@ by Google when it limits the usage of Symantec’s certificates. The CRL profile
 does not fit the purpose of such limitations. The CRLs are issued by the same
 CAs that are subject to be limited. </t>
 
-<t>Currently the set of CAs trusted by OS can be used for the validation purposes.
+<t>Currently the set of CAs trusted by OS or browsers can be used for the validation purposes.
 In case when a large enough CA becomes untrusted, it cannot be deleted from the
 storage of trusted CAs because it may cause error of validation of many
 certificates. The measures usually taken in such cases usually include
@@ -73,7 +73,7 @@ CRLs</eref>.
         thisUpdate              Time,
         limitedCertificates     SEQUENCE OF SEQUENCE  {
              userCertificate         CertificateSerialNumber,
-             sertificateIssuer       Name, 
+             certificateIssuer       Name, 
              limitationDate          Time,
              limitationPropagation   Enum,
              fingerprint SEQUENCE {
