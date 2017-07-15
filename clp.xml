@@ -66,8 +66,7 @@ CRLs</eref>.
         signatureValue       BIT STRING  }
 
    TBSCertList  ::=  SEQUENCE  {
-        version                 Version OPTIONAL,
-                                     -- if present, MUST be v1
+        version                 Version,
         signature               AlgorithmIdentifier,
         issuer                  Name,
         thisUpdate              Time,
