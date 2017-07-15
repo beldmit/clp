@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
-<rfc category="exp" docName="draft-belyavskiy-certificate-limitation-policy-03">
+<rfc category="exp" docName="draft-belyavskiy-certificate-limitation-policy-04">
 <front>
 <title>Certificate Limitation Policy</title>
 <author fullname="Dmitry Belyavskiy">
@@ -104,8 +104,8 @@ itself, to all of its descendants in the chain of trust, or both.</t>
 <t>
 and a subset of the following limitations:
 <list>
-<t>maxIssued - do not trust the certs issued after the specified date</t>
-<t>maxValidity  - do not trust the certs after the specified date</t>
+<t>issuedNotAfter - do not trust the certs issued after the specified date</t>
+<t>trustNotAfter  - do not trust the certs after the specified date</t>
 <t>validityPeriod, days - take minimal value from "native" validity period and specified in the limitation file</t>
 <t>ignoredX509Extensions - list of X.509 extensions of limited certificate that MUST be ignored for the specified certificate (e.g. EV-indicating extensions)</t>
 <t>requiredX509extensions - list of X.509 extensions that MUST be present in the certificate to be trusted.</t>
@@ -113,11 +113,11 @@ and a subset of the following limitations:
 </t>
 <t>The limitations are identified by OIDs</t>
 <section title="Limitations">
-<section title="maxIssued">
+<section title="issuedNotAfter">
 <t>When this limitation is present, any certificate matching the entry and
 issued after the specified date MUST NOT be trusted</t>
 </section>
-<section title="maxValidity">
+<section title="trustNotAfter">
 <t>When this limitation is present, any certificate matching the entry MUST NOT
 be trusted after the specified date.</t>
 </section>
@@ -147,19 +147,21 @@ Constraints</eref> limitation specified in RFC 5280.</t>
 application should check whether the provided CLP matches the internal
 requirements and is correclty signed by the specified key.</t>
 </section>
+<section title="Using multiple CLPs">
+<t>Applications MAY use more than one CLP to verify certificates.</t>
+</section>
 <section title="Verification with CLP">
 <t>In case of using CLP the checks enforced by CLP should be applied after the other checks.</t>
 <t>The limitation provided by CLP MUST NOT extend the trustworthy of the checked certificate.</t>
 <t>The limitations are applied after cryptographic validation of the
 certificate and building its chain of trust.  If the certificate or any of its
 ascendants in the chain of trust matches any record in the CLP, the limitations
-are applied from the ascendant to descendants. The maxIssued and maxValidity
+are applied from the ascendant to descendants. The issuedNotAfter and trustNotAfter
 limitations are applied to find out the actual validity periods for the any
 certificate in the chain of trust. If the CLP prescribes to have a particular
 extension(s) and the certificate does not have it, the certificate MUST NOT be
 trusted.
 </t>
-
 </section>
 
 <section title="ASN.1 notation">
@@ -177,8 +179,8 @@ consequences.</t>
 <section title="IANA considerations">
 </section>
 <section title="Acknoledgements">
-<t>Special thaks to Rich Salz, Igor Ustinov, Vasily Dolmatov, Stanislav
-Smyishlyaev, Patrik Fältström, Alexander Venedioukhin.  </t>
+<t>Special thanks to Rich Salz, Igor Ustinov, Vasily Dolmatov, Stanislav
+Smyishlyaev, Patrik Fältström, Alexander Venedioukhin, Artem Chuprina.  </t>
 </section>
 <section title="References">
 <t>The current version of the document is available on GitHub
