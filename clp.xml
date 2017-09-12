@@ -1,10 +1,16 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
-<rfc category="exp" docName="draft-belyavskiy-certificate-limitation-policy-03">
+<rfc category="exp" docName="draft-belyavskiy-certificate-limitation-policy-04">
 <front>
 <title>Certificate Limitation Policy</title>
 <author fullname="Dmitry Belyavskiy">
 <organization abbrev="TCI">Technical Centre of Internet</organization>
 <address>
+<postal>
+<street>8 Marta str., 1 bld. 12</street>
+<city>Moscow</city>
+<code>127083</code>
+<country>RU</country>
+</postal>
 <email>beldmit@gmail.com</email>
 </address>
 </author>
@@ -110,7 +116,9 @@ and a subset of the following limitations:
 <t>validityPeriod, days - take minimal value from "native" validity period and specified in the limitation file</t>
 <t>ignoredX509Extensions - list of X.509 extensions of limited certificate that MUST be ignored for the specified certificate (e.g. EV-indicating extensions)</t>
 <t>requiredX509extensions - list of X.509 extensions that MUST be present in the certificate to be trusted.</t>
+<t>requiredNativeChecking - list of the CA-provided checks that MUST be applied</t>
 <t>applicationNameConstraints - list of domains allowed to be issued by this certificate</t>
+<t>excludedIssueIntermediatory - disallow issuing of the Intermediatory certificates</t>
 </list>
 </t>
 <t>The limitations are identified by OIDs</t>
@@ -135,10 +143,24 @@ should be ignored for the matching certificate.</t>
 <t>When this limitation is present, the extensions listed in this element
 should be present for the matching certificate.</t>
 </section>
+<section title="requiredNativeChecking">
+<t>When this limitation is present, it specifies that the certificates issued
+by this CA SHOULD be checked against CRL and/or OCSP, depending on
+contents of the extension.</t>
+</section>
 <section title="applicationNameConstraints">
 <t>This limitation are applied like <eref
 target="https://tools.ietf.org/html/rfc5280#section-4.2.1.10">Name
 Constraints</eref> limitation specified in RFC 5280.</t>
+<t>This section implies 2 variants of checks:
+<list>
+<t>The list of names that are allowed for the CA to issue certificates for</t>
+<t>The list of names that are forbidden for the CA to issue certificates for</t>
+</list>
+</t>
+<section title="excludedIssueIntermediatory">
+<t>When this limitation is present, the intermediate certificates issued by
+this CA MUST NOT be trusted.</t> </section>
 </section>
 </section>
 </section>
