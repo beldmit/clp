@@ -149,6 +149,9 @@ and a subset of the following limitations:
 issued after the specified date MUST NOT be trusted</t>
 <t>The issuedNotAfter limitation is identified by OID TBA.</t>
 <t><figure><artwork><![CDATA[
+issuedNotAfter ::= SEQUENCE {
+    IssuedNotAfter    Time
+}
 ]]></artwork></figure></t>
 </section>
 <section title="trustNotAfter">
@@ -156,13 +159,20 @@ issued after the specified date MUST NOT be trusted</t>
 be trusted after the specified date.</t>
 <t>The trustNotAfter limitation is identified by OID TBA.</t>
 <t><figure><artwork><![CDATA[
+trustNotAfter ::= SEQUENCE {
+    TrustNotAfter    Time
+}
 ]]></artwork></figure></t>
 </section>
 <section title="validityPeriod">
 <t>When this limitation is present, no certificate matching the entry should be
 treated as valid after specified period from its validFrom.</t>
+<t>The validityPeriod is measured in days.</t>
 <t>The validityPeriod limitation is identified by OID TBA.</t>
 <t><figure><artwork><![CDATA[
+validityPeriod ::= SEQUENCE {
+    Days INTEGER
+}
 ]]></artwork></figure></t>
 </section>
 <section title="ignoredX509Extensions">
@@ -170,6 +180,8 @@ treated as valid after specified period from its validFrom.</t>
 should be ignored for the matching certificate.</t>
 <t>The ignoredX509Extensions limitation is identified by OID TBA.</t>
 <t><figure><artwork><![CDATA[
+ignoredX509Extensions :: = SEQUENCE SIZE (1..MAX) OF ExtenID
+ExtenID :: = OBJECT IDENTIFIER 
 ]]></artwork></figure></t>
 </section>
 <section title="requiredX509extensions">
@@ -177,6 +189,8 @@ should be ignored for the matching certificate.</t>
 should be present for the matching certificate.</t>
 <t>The requiredX509extensions limitation is identified by OID TBA.</t>
 <t><figure><artwork><![CDATA[
+requiredX509extensions :: = SEQUENCE SIZE (1..MAX) OF ExtenID
+ExtenID :: = OBJECT IDENTIFIER 
 ]]></artwork></figure></t>
 </section>
 <section title="requiredNativeChecking">
@@ -185,6 +199,10 @@ by this CA SHOULD be checked against CRL and/or OCSP, depending on
 contents of the extension.</t>
 <t>The requiredNativeChecking limitation is identified by OID TBA.</t>
 <t><figure><artwork><![CDATA[
+requiredNativeChecking ::= SEQUENCE {
+    RequiredCRLChecking BOOLEAN,
+    RequiredOCSPChecking BOOLEAN
+}
 ]]></artwork></figure></t>
 </section>
 <section title="applicationNameConstraints">
@@ -196,9 +214,24 @@ Constraints</eref> limitation specified in RFC 5280.</t>
 <t>The list of names that are allowed for the CA to issue certificates for</t>
 <t>The list of names that are forbidden for the CA to issue certificates for</t>
 </list>
+The applicationNameConstraints limitation is specified according to 
+RFC 5280, 4.2.1.10 and reuses OID specified in RFC 5280.
 </t>
-<t>The applicationNameConstraints limitation is identified by OID TBA.</t>
 <t><figure><artwork><![CDATA[
+      id-ce-nameConstraints OBJECT IDENTIFIER ::=  { id-ce 30 }
+
+      NameConstraints ::= SEQUENCE {
+           permittedSubtrees       [0]     GeneralSubtrees OPTIONAL,
+           excludedSubtrees        [1]     GeneralSubtrees OPTIONAL }
+
+      GeneralSubtrees ::= SEQUENCE SIZE (1..MAX) OF GeneralSubtree
+
+      GeneralSubtree ::= SEQUENCE {
+           base                    GeneralName,
+           minimum         [0]     BaseDistance DEFAULT 0,
+           maximum         [1]     BaseDistance OPTIONAL }
+
+      BaseDistance ::= INTEGER (0..MAX)
 ]]></artwork></figure></t>
 <section title="excludedIssueIntermediatory">
 <t>When this limitation is present, the intermediate certificates issued by
