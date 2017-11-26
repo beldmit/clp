@@ -86,9 +86,30 @@ CRLs</eref>.
                  fingerprintAlgorithm AlgorithmIdentifier,
                  fingerprintValue     OCTET STRING
                                   } OPTIONAL,
-             limitations          SEQUENCE,
+             limitations          Limitations,
                                 } OPTIONAL,
                               };
+
+   Limitations  ::=  SEQUENCE SIZE (1..MAX) OF Limitation
+
+   Limitation  ::=  SEQUENCE  {
+        limitID      OBJECT IDENTIFIER,
+        LimitationValue   OCTET STRING
+                    -- contains the DER encoding of an ASN.1 value
+                    -- corresponding to the limitation type 
+                    -- identified by limitID
+        }
+
+]]></artwork></figure>
+</t>
+<t>
+The ASN.1 format of particular limitations is provided in the corresponding sections.
+
+Anywhere below the Time in ASN.1 notation is treated according to RFC 5280:
+<figure><artwork><![CDATA[
+   Time ::= CHOICE {
+        utcTime        UTCTime,
+        generalTime    GeneralizedTime }
 ]]></artwork></figure>
 </t>
 <section title="CLP fields">
@@ -126,27 +147,45 @@ and a subset of the following limitations:
 <section title="issuedNotAfter">
 <t>When this limitation is present, any certificate matching the entry and
 issued after the specified date MUST NOT be trusted</t>
+<t>The issuedNotAfter limitation is identified by OID TBA.</t>
+<t><figure><artwork><![CDATA[
+]]></artwork></figure></t>
 </section>
 <section title="trustNotAfter">
 <t>When this limitation is present, any certificate matching the entry MUST NOT
 be trusted after the specified date.</t>
+<t>The trustNotAfter limitation is identified by OID TBA.</t>
+<t><figure><artwork><![CDATA[
+]]></artwork></figure></t>
 </section>
 <section title="validityPeriod">
 <t>When this limitation is present, no certificate matching the entry should be
 treated as valid after specified period from its validFrom.</t>
+<t>The validityPeriod limitation is identified by OID TBA.</t>
+<t><figure><artwork><![CDATA[
+]]></artwork></figure></t>
 </section>
 <section title="ignoredX509Extensions">
 <t>When this limitation is present, the extensions listed in this element
 should be ignored for the matching certificate.</t>
+<t>The ignoredX509Extensions limitation is identified by OID TBA.</t>
+<t><figure><artwork><![CDATA[
+]]></artwork></figure></t>
 </section>
 <section title="requiredX509extensions">
 <t>When this limitation is present, the extensions listed in this element
 should be present for the matching certificate.</t>
+<t>The requiredX509extensions limitation is identified by OID TBA.</t>
+<t><figure><artwork><![CDATA[
+]]></artwork></figure></t>
 </section>
 <section title="requiredNativeChecking">
 <t>When this limitation is present, it specifies that the certificates issued
 by this CA SHOULD be checked against CRL and/or OCSP, depending on
 contents of the extension.</t>
+<t>The requiredNativeChecking limitation is identified by OID TBA.</t>
+<t><figure><artwork><![CDATA[
+]]></artwork></figure></t>
 </section>
 <section title="applicationNameConstraints">
 <t>This limitation are applied like <eref
@@ -158,9 +197,16 @@ Constraints</eref> limitation specified in RFC 5280.</t>
 <t>The list of names that are forbidden for the CA to issue certificates for</t>
 </list>
 </t>
+<t>The applicationNameConstraints limitation is identified by OID TBA.</t>
+<t><figure><artwork><![CDATA[
+]]></artwork></figure></t>
 <section title="excludedIssueIntermediatory">
 <t>When this limitation is present, the intermediate certificates issued by
-this CA MUST NOT be trusted.</t> </section>
+this CA MUST NOT be trusted.</t>
+<t>The excludedIssueIntermediatory limitation is identified by OID TBA.</t>
+<t><figure><artwork><![CDATA[
+]]></artwork></figure></t>
+</section>
 </section>
 </section>
 </section>
