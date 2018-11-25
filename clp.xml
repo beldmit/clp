@@ -132,8 +132,6 @@ an Extended Key Usage value.</t>
 <t>The issuer of the certificate with limited trust.</t>
 <t>The serial of the certificate with limited trust.</t>
 <t>The fingerprint of the certificate with limited trust (optional).</t>
-<t>limitationPropagation. This field indicates whether limitations are applied to the certificate
-itself, to all of its descendants in the chain of trust, or both.</t>
 </list>
 </t>
 <t>
@@ -282,6 +280,21 @@ treated as valid.</t>
 <section title="ASN.1 notation">
 <t>TBD</t>
 </section>
+
+<section title="Real-world considerations">
+<section title="Expected sources and consumers of CLPs">
+<t>Public CLPs can be created and distributed by such parties as OS vendors,
+browser vendors and other parties treated as worth trusting.</t>
+<t>Usage of CLPs is reasonable for applications establishing TLS connections
+with unpredictable sets of peers.  The main examples of such applications are
+web-browsers and MTAs.</t>
+</section>
+<section title="Size limitation">
+<t>To avoid uncontrolled growth of CLPs, the limitations are applied to root
+and intermediate CA certificates.</t>
+</section>
+</section>
+
 <section title="Security considerations">
 <t>In case when an application uses CLP, it is recommended to specify the minimal
 date of issuing of the CLP document somewhere in code. It allows to avoid an
